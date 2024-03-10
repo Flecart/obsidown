@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "obsidian-jekyll"
+version = "0.1.0"
+description = "A quick way to convert obsidian markdown docs to Jekyll static pages"
+authors = ["Angelo 'Flecart' Huang <xuanqiang.huang@studio.unibo.it>"]
+license = "GNU"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyyaml = "^6.0.1"
+python-frontmatter = "^1.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
