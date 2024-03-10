@@ -1,0 +1,13 @@
+sources:
+  paths:
+    - /home/flecart/Documents/old_obsidian/study-notes/universita
+    - /home/flecart/Documents/old_obsidian/study-notes/other
+  images:
+    - /home/flecart/Documents/old_obsidian/image
+
+
+output:
+  base: http://localhost:4000
+  path: notes
+  images:
+    - images/notes

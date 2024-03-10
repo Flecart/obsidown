@@ -1,5 +1,5 @@
 import pytest
-from obsidian_jekyll import convert_maths, convert_images
+from obsidian_jekyll import convert_maths, convert_images, extract_links, convert_links
 
 def test_convert_maths():
     # Test case: Single math expression
@@ -41,8 +41,8 @@ def test_convert_images():
     assert convert_images(page, base_url) == expected_output
 
     # Test case: Multiple image tags
-    page = '![[image1.jpeg]] and ![[image2.webm]]'
-    expected_output = '<img src="http://example.com/images/image1.jpeg" alt="image1"> and <img src="http://example.com/images/image2.webm" alt="image2">'
+    page = '![[image1.jpeg]] and ![[image2.webp]]'
+    expected_output = '<img src="http://example.com/images/image1.jpeg" alt="image1"> and <img src="http://example.com/images/image2.webp" alt="image2">'
     assert convert_images(page, base_url) == expected_output
 
     # Test case: No image tags
@@ -54,3 +54,46 @@ def test_convert_images():
     page = '![[name.png|123]]'
     expected_output = '<img src="http://example.com/images/name.png" width="123" alt="name">'
     assert convert_images(page, base_url) == expected_output
+
+def test_extract_links():
+    # Test case: Single link
+    page = '[[link1]]'
+    expected_output = ['link1']
+    assert extract_links(page) == expected_output
+
+    # Test case: Multiple links
+    page = '[[link1]] and [[link2]]'
+    expected_output = ['link1', 'link2']
+    assert extract_links(page) == expected_output
+
+    # Test case: No links
+    page = "No links here"
+    expected_output = []
+    assert extract_links(page) == expected_output
+
+def test_convert_links():
+    base_url = "http://example.com"
+
+    # Test case: Single link
+    page = '[[link1]]'
+    expected_output = '[link1](http://example.com/link1)'
+    assert convert_links(page, base_url) == expected_output
+
+    # Test case: Multiple links
+    page = '[[link1]] and [[link2]]'
+    expected_output = '[link1](http://example.com/link1) and [link2](http://example.com/link2)'
+    assert convert_links(page, base_url) == expected_output
+
+    # Test case: No links
+    page = "No links here"
+    expected_output = "No links here"
+    assert convert_links(page, base_url) == expected_output
+
+    # Test alias links
+    page = '[[link1|alias1]] and [[link2|alias2]]'
+    expected_output = '[alias1](http://example.com/link1) and [alias2](http://example.com/link2)'
+
+    # Test kebab conversion
+    page = '[[link with spaces]]'
+    expected_output = '[link with spaces](http://example.com/link-with-spaces)'
+    assert convert_links(page, base_url) == expected_output
