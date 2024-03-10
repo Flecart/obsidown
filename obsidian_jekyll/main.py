@@ -148,5 +148,38 @@ def main():
             with open(image_local_path, "rb") as i:
                 f.write(i.read())
 
+    # Now create index pages
+    index_frontmatter = {
+        "layout": "page",
+        "title": "Notes",
+        "permalink": "/notes",
+        "tags": "italian"
+    }
+    index_content = "Qui potrai trovare le categorie di appunti presenti nel sito: \n"
+
+    categories = {}
+    for file in files:
+        _, contents, references = load_contents(file)
+        no_extension = utils.remove_extension(os.path.basename(file))
+        target = "/" + utils.to_kebab_case(config.output.path + "/" + no_extension)
+
+        # The name of the directory is the category
+        current_category = os.path.basename(os.path.dirname(file)).replace("-", " ").title()
+        if current_category not in categories:
+            categories[current_category] = f"- [{no_extension}]({target})\n"
+        else:
+            categories[current_category] += f"- [{no_extension}]({target})\n"
+
+    index_content += f"## Table of Contents\n"
+    for category in categories:
+        index_content += f"- [{category}](#{utils.to_kebab_case(category)})\n"
+    index_content += "\n\n"
+
+    for category, content in categories.items():
+        index_content += f"## {category}\n"
+        index_content += content + "\n\n"
+    with open(os.path.join(config.output.filesystem, config.output.path, "index.md"), "w") as f:
+        f.write(frontmatter.dumps(frontmatter.Post(index_content, **index_frontmatter)))
+
 if __name__ == "__main__":
     main()

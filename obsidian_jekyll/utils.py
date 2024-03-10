@@ -6,11 +6,12 @@ def convert_maths(page: str):
     Add newline characters before and after double dollar sign expressions if they are not already present.
     
     """
+    # Add newline characters before and after double dollar sign expressions if they are not already present
+    page = re.sub(r'\$\$\n([^\$]+?)\n\$\$', r'\n$$\n\1\n$$\n', page, flags=re.DOTALL)
+    
     # Replace single dollar sign math expressions with double dollar sign expressions
     page = re.sub(r'(?<!\$)\$([^\$]+?)\$(?!\$)', r'$$\1$$', page)
 
-    # Add newline characters before and after double dollar sign expressions if they are not already present
-    page = re.sub(r'\$\$\n([^\$]+?)\n\$\$', r'\n$$\n\1\n$$\n', page, flags=re.DOTALL)
 
     return page
 
