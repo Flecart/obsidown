@@ -54,12 +54,16 @@ def load_files(filepath: str) -> list[str]:
 class SourcesList(BaseModel):
     paths: list[str]
     images: list[str]
+
 class Destination(BaseModel):
     base: str  # URL base
-    images: str  # where to store the images
     path: str  # where to store the files
+    images: str  # where to store the images
+    filesystem: str  # the location of the jekyll app
+
 class Config(BaseModel):
     sources: SourcesList
+    output: Destination
 
 def main():
     """ List of paths 
@@ -76,28 +80,73 @@ def main():
     files = []
     for path in config.sources.paths:
         files += load_files(path)
-    import re
+
+    image_refs = set()
     for file in files:
-        # metadata, contents, references = load_contents(file)
-        
-        with open(file, "r") as f:
-            contents = f.read()
-        contents = re.sub(r'\*\*+', r'**', contents)
-        print(contents)
+        _, contents, references = load_contents(file)
+        print(file)
         # post = frontmatter.Post(contents, **metadata)
 
         # val = frontmatter.dumps(post)
-        with open (file, "w") as f:
-            f.write(contents)
-        # if (len(references) > 0):
-        #     contents = utils.convert_maths(contents)
-        #     contents = utils.convert_images(contents)
-        #     contents = utils.convert_links(contents)
-        #     print(file, metadata, references)
-        #     print()
-        #     print(contents)
-        #     break
+        # We need to remove the references that will not be present in the final file
+        not_cited_refs = set()
+        for ref in references:
+            if utils.is_image(ref):
+                image_refs.add(ref)
+            else:
+                found = False
+                for f in files:
+                    if ref in f:
+                        found = True
+                        break
+                
+                if not found:
+                    not_cited_refs.add(ref)
 
+        contents = utils.convert_maths(contents)
+        contents = utils.convert_external_links(contents)
+        if (len(references) > 0):
+            contents = utils.filter_link(contents, not_cited_refs)
+            contents = utils.convert_images(contents, "/" + config.output.images)
+            contents = utils.convert_links(contents, "/" + config.output.path)
+
+        no_extension = utils.remove_extension(os.path.basename(file))
+        new_metadata = {
+            "layout": "page",
+            "title": no_extension,
+            "permalink": utils.to_kebab_case(config.output.path + "/" + no_extension),
+            "tags": "italian"
+        }
+
+        post = frontmatter.Post(contents, **new_metadata)
+        val = frontmatter.dumps(post)
+        dir = os.path.join(config.output.filesystem, config.output.path)
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+        with open(os.path.join(config.output.filesystem, config.output.path, os.path.basename(file)), "w") as f:
+            f.write(val)
+
+    # Now write the images on the filesystem
+    for image in image_refs:
+        image_local_path = None
+        for img in images:
+            if image in img:
+                image_local_path = img
+                break
+        if image_local_path is None:
+            print(f"Image {image} not found in the filesystem")
+            continue
+        
+        # This is to make sure we don't get any overlapping images!
+        # Another solution is to change the name of the image...
+        dirname = os.path.dirname(image)
+        output_dir = os.path.join(config.output.filesystem, config.output.images, dirname)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        with open(os.path.join(config.output.filesystem, config.output.images, image), "wb") as f:
+            with open(image_local_path, "rb") as i:
+                f.write(i.read())
 
 if __name__ == "__main__":
     main()

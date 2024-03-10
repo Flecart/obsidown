@@ -1,5 +1,5 @@
 import pytest
-from obsidian_jekyll import convert_maths, convert_images, extract_links, convert_links
+from obsidian_jekyll import *
 
 def test_convert_maths():
     # Test case: Single math expression
@@ -97,3 +97,59 @@ def test_convert_links():
     page = '[[link with spaces]]'
     expected_output = '[link with spaces](http://example.com/link-with-spaces)'
     assert convert_links(page, base_url) == expected_output
+
+def test_filter_link():
+    # Test case: Single link
+    page = 'Hello [[world]]'
+    links = ['world']
+    expected_output = 'Hello world'
+    assert filter_link(page, links) == expected_output
+
+    # Test case: Multiple links
+    page = 'Hello [[world]], [[Python]] is great'
+    links = ['world', 'Python']
+    expected_output = 'Hello world, Python is great'
+    assert filter_link(page, links) == expected_output
+
+    # Test case: No links
+    page = "Hello world"
+    links = []
+    expected_output = "Hello world"
+    assert filter_link(page, links) == expected_output
+
+def test_remove_extension():
+    # Test case: Filename with extension
+    filename = 'file.txt'
+    expected_output = 'file'
+    assert remove_extension(filename) == expected_output
+
+    # Test case: Filename without extension
+    filename = 'file'
+    expected_output = 'file'
+    assert remove_extension(filename) == expected_output
+
+    # Test case: Filename with multiple dots
+    filename = 'my.file.txt'
+    expected_output = 'my.file'
+    assert remove_extension(filename) == expected_output
+
+def test_convert_external_links():
+    # Test case: Single external link
+    page = 'https://google.com'
+    expected_output = '[https://google.com](https://google.com)'
+    assert convert_external_links(page) == expected_output
+
+    # Test case: External link already in markdown format
+    page = '[https://google.com](https://google.com)'
+    expected_output = '[https://google.com](https://google.com)'
+    assert convert_external_links(page) == expected_output
+
+    # Test case: Multiple external links
+    page = 'https://google.com and https://github.com'
+    expected_output = '[https://google.com](https://google.com) and [https://github.com](https://github.com)'
+    assert convert_external_links(page) == expected_output
+
+    # Test case: No external links
+    page = "No links here"
+    expected_output = "No links here"
+    assert convert_external_links(page) == expected_output

@@ -1,4 +1,5 @@
 import re
+import os
 
 def convert_maths(page: str):
     """ Convert single dollar sign math expressions to double dollar sign expressions.
@@ -29,6 +30,20 @@ def convert_images(page: str, base: str = ""):
 
     return page
 
+def convert_external_links(page: str):
+    """ If there is an external link without the markdown format, convert it to the markdown format. 
+
+    Example
+    -------
+    >>> convert_external_links("https://google.com")
+    "[https://google.com](https://google.com)"
+    >>> convert_external_links("[https://google.com](https://google.com)")
+    "[https://google.com](https://google.com)"
+    """
+
+    # Questo regex è un po' fragile, ma è difficile da fare, dovresti avere lookahead infinito!
+    return re.sub(r'(?<!\[)(https?:\/\/[^\s\]\(\)]+)(?!(\)|[a-z]|\.|[0-9]|[A-Z]))', r'[\1](\1)', page)
+
 def convert_links(page: str, base: str = ""):
     """ Convert the links to the Jekyll markdown format. 
     # Warning: this assumes images to be links to!
@@ -40,6 +55,20 @@ def convert_links(page: str, base: str = ""):
     page = re.sub(r'\[\[([^\]]+?)\]\]', lambda x: convert_to_md(x.group(1)), page)
     return page
 
+def filter_link(page: str, links: list[str]):
+    """ removes the links with  link in the page, making it a normal string
+
+    Example
+    -------
+    >>> filter_link("hello [[world]]", ["world"])
+    "hello world" 
+       
+    """
+
+    for link in links:
+        page = re.sub(r"!?\[\[{}\]\]".format(link), link, page)
+
+    return page
 
 def extract_links(page: str):
     """ Extract all the links from the page. """
@@ -52,3 +81,9 @@ def is_image(name: str):
 def to_kebab_case(name: str):
     """ Convert a string to kebab case. """
     return name.lower().replace("'", " ").replace(" ", "-")
+
+def remove_extension(name: str):
+    """ Remove the extension from a file name. """
+    if "." not in name:
+        return name
+    return ".".join(name.split(".")[:-1])
