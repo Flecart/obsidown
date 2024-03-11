@@ -8,7 +8,7 @@ def convert_maths(page: str):
     """
     # Add newline characters before and after double dollar sign expressions if they are not already present
     page = re.sub(r'\$\$\n([^\$]+?)\n\$\$', r'\n$$\n\1\n$$\n', page, flags=re.DOTALL)
-    
+
     # Replace single dollar sign math expressions with double dollar sign expressions
     page = re.sub(r'(?<!\$)\$([^\$]+?)\$(?!\$)', r'$$\1$$', page)
 
@@ -43,12 +43,21 @@ def convert_external_links(page: str):
     """
 
     # Questo regex è un po' fragile, ma è difficile da fare, dovresti avere lookahead infinito!
-    return re.sub(r'(?<!\[)(https?:\/\/[^\s\]\(\)]+)(?!(\)|[a-z]|\.|[0-9]|[A-Z]))', r'[\1](\1)', page)
+    return re.sub(r'(?<!\[)(https?:\/\/[^\s\]\(\)]+)(?!(\)|[a-z]|\.|[0-9]|[A-Z]|\/|_|-|=|\?|&))', r'[\1](\1)', page)
 
 def convert_links(page: str, base: str = ""):
     """ Convert the links to the Jekyll markdown format. 
     # Warning: this assumes images to be links to!
     """
+    # first convert hashtag links
+
+    convert_to_md = lambda x: "[{}]({})".format(x, to_kebab_case(x))
+    convert_two_to_md = lambda x, y: "[{}]({})".format(y, to_kebab_case(x))
+
+    page = re.sub(r'\[\[(#[^\]]+?)\|([^\]]+)\]\]', lambda x: convert_two_to_md(x.group(1), x.group(2)), page)
+    page = re.sub(r'\[\[(#[^\]]+?)\]\]', lambda x: convert_to_md(x.group(1)), page)
+
+    # then outer links
     convert_to_md = lambda x: "[{}]({}/{})".format(x, base, to_kebab_case(x))
     convert_two_to_md = lambda x, y: "[{}]({}/{})".format(y, base, to_kebab_case(x))
 
@@ -88,3 +97,7 @@ def remove_extension(name: str):
     if "." not in name:
         return name
     return ".".join(name.split(".")[:-1])
+
+def remove_after_string(content: str, string: str):
+    """ Remove everything after a string. """
+    return content.split(string)[0]

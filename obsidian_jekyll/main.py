@@ -91,9 +91,12 @@ def main():
         # We need to remove the references that will not be present in the final file
         not_cited_refs = set()
         for ref in references:
+            ref = ref.split("|")[0] # don't want the aliases!
             if utils.is_image(ref):
                 image_refs.add(ref)
             else:
+                # here is image ref, we should count only the first part
+                ref = ref.split("#")[0]
                 found = False
                 for f in files:
                     if ref in f:
@@ -109,6 +112,8 @@ def main():
             contents = utils.filter_link(contents, not_cited_refs)
             contents = utils.convert_images(contents, "/" + config.output.images)
             contents = utils.convert_links(contents, "/" + config.output.path)
+        contents = utils.remove_after_string(contents, "# Registro ripassi")
+        contents = utils.remove_after_string(contents, "## Note di ripasso")
 
         no_extension = utils.remove_extension(os.path.basename(file))
         new_metadata = {
@@ -155,7 +160,7 @@ def main():
         "permalink": "/notes",
         "tags": "italian"
     }
-    index_content = "Qui potrai trovare le categorie di appunti presenti nel sito: \n"
+    index_content = "Here you can find the categories of all the notes on the site: \n"
 
     categories = {}
     for file in files:

@@ -98,6 +98,15 @@ def test_convert_links():
     expected_output = '[link with spaces](http://example.com/link-with-spaces)'
     assert convert_links(page, base_url) == expected_output
 
+    # Test hashtag mix conversion
+    page = '[[Legge di Coulomb#Principio di sovrapposizione|principio di sovrapposizione]]'
+    expected_output = '[principio di sovrapposizione](http://example.com/legge-di-coulomb#principio-di-sovrapposizione)'
+    assert convert_links(page, base_url) == expected_output
+
+    page = '[[#internal-link]]'
+    expected_output = '[#internal-link](#internal-link)'
+    assert convert_links(page, base_url) == expected_output
+
 def test_filter_link():
     # Test case: Single link
     page = 'Hello [[world]]'
@@ -152,4 +161,12 @@ def test_convert_external_links():
     # Test case: No external links
     page = "No links here"
     expected_output = "No links here"
+    assert convert_external_links(page) == expected_output
+
+    page = "[https://csunibo.github.io/tecnologie-web/lucidi/teoria/23-metadati.pdf](https://csunibo.github.io/tecnologie-web/lucidi/teoria/23-metadati.pdf)"
+    expected_output = "[https://csunibo.github.io/tecnologie-web/lucidi/teoria/23-metadati.pdf](https://csunibo.github.io/tecnologie-web/lucidi/teoria/23-metadati.pdf)"
+    assert convert_external_links(page) == expected_output
+
+    page = "[video](https://youtu.be/D5ABGSplM8c?t=548&autoplay=1)"
+    expected_output = "[video](https://youtu.be/D5ABGSplM8c?t=548&autoplay=1)"
     assert convert_external_links(page) == expected_output
