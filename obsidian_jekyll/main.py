@@ -65,11 +65,11 @@ class Config(BaseModel):
     sources: SourcesList
     output: Destination
 
-def main():
+def main(config: str = "config.yaml"):
     """ List of paths 
-    
     """
-    config = yaml.load(open("config.yaml", "r"), Loader=yaml.FullLoader)
+
+    config = yaml.load(open(config, "r"), Loader=yaml.FullLoader)
     config = Config(**config)
     print(config)
 
