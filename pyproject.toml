@@ -12,10 +12,10 @@ pyyaml = "^6.0.1"
 python-frontmatter = "^1.1.0"
 pydantic = "^2.6.3"
 
-
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
 ruff = "^0.3.5"
+pre-commit = "^3.7.0"
 
 [build-system]
 requires = ["poetry-core"]
