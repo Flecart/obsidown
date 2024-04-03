@@ -65,13 +65,13 @@ class Config(BaseModel):
     sources: SourcesList
     output: Destination
 
-def main(config: str = "config.yaml"):
+def main(config: str):
     """ List of paths 
     """
 
     config = yaml.load(open(config, "r"), Loader=yaml.FullLoader)
     config = Config(**config)
-    print(config)
+    # print(config)
 
     images = []
     for images_path in config.sources.images:

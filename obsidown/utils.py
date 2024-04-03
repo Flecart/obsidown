@@ -46,8 +46,13 @@ def convert_external_links(page: str):
     return re.sub(r'(?<!\[)(https?:\/\/[^\s\]\(\)]+)(?!(\)|[a-z]|\.|[0-9]|[A-Z]|\/|_|-|=|\?|&))', r'[\1](\1)', page)
 
 def convert_links(page: str, base: str = ""):
-    """ Convert the links to the Jekyll markdown format. 
+    """ Convert the links to the markdown format. 
     # Warning: this assumes images to be links to!
+
+    Example
+    -------
+    >>> convert_links("hello [[world]]", "https://google.com")
+    "hello [world](https://google.com/world)"
     """
     # first convert hashtag links
 
