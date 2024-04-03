@@ -1,5 +1,5 @@
 import pytest
-from obsidian_jekyll import *
+from obsidown import convert_maths, convert_images, extract_links, convert_links, filter_link, remove_extension, convert_external_links
 
 def test_convert_maths():
     # Test case: Single math expression

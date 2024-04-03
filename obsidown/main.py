@@ -175,7 +175,7 @@ def main(config: str):
         else:
             categories[current_category] += f"- [{no_extension}]({target})\n"
 
-    index_content += f"## Table of Contents\n"
+    index_content += "## Table of Contents\n"
     for category in categories:
         index_content += f"- [{category}](#{utils.to_kebab_case(category)})\n"
     index_content += "\n\n"

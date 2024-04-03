@@ -1,5 +1,4 @@
 import re
-import os
 
 def convert_maths(page: str):
     """ Convert single dollar sign math expressions to double dollar sign expressions.
@@ -56,18 +55,22 @@ def convert_links(page: str, base: str = ""):
     """
     # first convert hashtag links
 
-    convert_to_md = lambda x: "[{}]({})".format(x, to_kebab_case(x))
-    convert_two_to_md = lambda x, y: "[{}]({})".format(y, to_kebab_case(x))
+    def convert_to_md(x):
+        return '[{}]({})'.format(x, to_kebab_case(x))
+    def convert_two_to_md(x, y):
+        return '[{}]({})'.format(y, to_kebab_case(x))
 
     page = re.sub(r'\[\[(#[^\]]+?)\|([^\]]+)\]\]', lambda x: convert_two_to_md(x.group(1), x.group(2)), page)
     page = re.sub(r'\[\[(#[^\]]+?)\]\]', lambda x: convert_to_md(x.group(1)), page)
 
     # then outer links
-    convert_to_md = lambda x: "[{}]({}/{})".format(x, base, to_kebab_case(x))
-    convert_two_to_md = lambda x, y: "[{}]({}/{})".format(y, base, to_kebab_case(x))
+    def convert_to_md2(x):
+        return '[{}]({}/{})'.format(x, base, to_kebab_case(x))
+    def convert_two_to_md2(x, y):
+        return '[{}]({}/{})'.format(y, base, to_kebab_case(x))
 
-    page = re.sub(r'\[\[([^\]]+?)\|([^\]]+)\]\]', lambda x: convert_two_to_md(x.group(1), x.group(2)), page)
-    page = re.sub(r'\[\[([^\]]+?)\]\]', lambda x: convert_to_md(x.group(1)), page)
+    page = re.sub(r'\[\[([^\]]+?)\|([^\]]+)\]\]', lambda x: convert_two_to_md2(x.group(1), x.group(2)), page)
+    page = re.sub(r'\[\[([^\]]+?)\]\]', lambda x: convert_to_md2(x.group(1)), page)
     return page
 
 def filter_link(page: str, links: list[str]):
