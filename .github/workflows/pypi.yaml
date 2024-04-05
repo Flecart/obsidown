@@ -7,8 +7,16 @@ on:
 # see https://github.com/python-poetry/poetry/blob/master/.github/workflows/release.yml
 jobs:
   release:
-    name: Release
+    name: Release to github and pypi
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/obsidown
+    permissions:
+      id-token: write 
+      contents: write
+      pull-requests: write
+      repository-projects: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -40,3 +48,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: false
           prerelease: steps.check-version.outputs.prerelease == 'true'
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          packages: dist/*
