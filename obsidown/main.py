@@ -1,78 +1,19 @@
+from typing import Iterable
 import yaml
 import os
-from pydantic import BaseModel
 import frontmatter
+
+from obsidown.config import Config
+from obsidown.operations.base import MdFile, _load_contents
+from obsidown.operations.dispatch import dispatch
 from . import utils
-
-
-def convert(content: str):
-    """Converts every content of the page to Jekyll markdown format."""
-
-
-def load_contents(filepath: str) -> tuple[dict, str, list[str]]:
-    """Load the contents from the config file.
-
-    Returns
-    -------
-    tuple[str, list[str]
-            The contents of the file
-        Second dict
-            The references of the file
-    """
-
-    with open(filepath, "r") as file:
-        metadata, contents = frontmatter.parse(file.read())
-    return metadata, contents, utils.extract_links(contents)
-
-
-def load_images(filepath: str) -> list[str]:
-    """Returns a list of all files in the directory."""
-    result = []
-    for root, dirs, files in os.walk(filepath):
-        for file in files:
-            if utils.is_image(file):
-                result.append(os.path.join(root, file))
-
-    return result
-
-
-def load_files(filepath: str) -> list[str]:
-    """Returns a list of all files in the directory."""
-    result = []
-    for root, dirs, files in os.walk(filepath):
-        for file in files:
-            if not utils.is_image(file):
-                result.append(os.path.join(root, file))
-
-    return result
-
-
-# def set_front_matter(contents: str) -> str:
-
-
-class SourcesList(BaseModel):
-    paths: list[str]
-    images: list[str]
-
-
-class Destination(BaseModel):
-    base: str  # URL base
-    path: str  # where to store the files
-    images: str  # where to store the images
-    filesystem: str  # the location of the jekyll app
-
-
-class Config(BaseModel):
-    sources: SourcesList
-    output: Destination
 
 
 def main(config: str):
     """List of paths"""
 
     config = yaml.load(open(config, "r"), Loader=yaml.FullLoader)
-    config = Config(**config)
-    # print(config)
+    config: Config = Config(**config)
 
     images = []
     for images_path in config.sources.images:
@@ -81,17 +22,13 @@ def main(config: str):
     files = []
     for path in config.sources.paths:
         files += load_files(path)
-
     image_refs = set()
     for file in files:
-        _, contents, references = load_contents(file)
-        print(file)
-        # post = frontmatter.Post(contents, **metadata)
+        md_file = MdFile.from_filename(file)
 
-        # val = frontmatter.dumps(post)
         # We need to remove the references that will not be present in the final file
         not_cited_refs = set()
-        for ref in references:
+        for ref in md_file.references:
             ref = ref.split("|")[0]  # don't want the aliases!
             if utils.is_image(ref):
                 image_refs.add(ref)
@@ -107,37 +44,32 @@ def main(config: str):
                 if not found:
                     not_cited_refs.add(ref)
 
-        contents = utils.convert_maths(contents)
-        contents = utils.convert_external_links(contents)
-        if len(references) > 0:
-            contents = utils.filter_link(contents, not_cited_refs)
-            contents = utils.convert_images(contents, "/" + config.output.images)
-            contents = utils.convert_links(contents, "/" + config.output.path)
-        contents = utils.remove_after_string(contents, "# Registro ripassi")
-        contents = utils.remove_after_string(contents, "## Note di ripasso")
-
-        no_extension = utils.remove_extension(os.path.basename(file))
-        new_metadata = {
-            "layout": "page",
-            "title": no_extension,
-            "permalink": utils.to_kebab_case(config.output.path + "/" + no_extension),
-            "tags": "italian",
-        }
-
-        post = frontmatter.Post(contents, **new_metadata)
-        val = frontmatter.dumps(post)
-        dir = os.path.join(config.output.filesystem, config.output.path)
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-        with open(
-            os.path.join(
-                config.output.filesystem, config.output.path, os.path.basename(file)
-            ),
-            "w",
-        ) as f:
-            f.write(val)
+        for operation in config.pipeline:
+            operation = dispatch(
+                operation.name, config, not_cited_refs, **operation.options
+            )
+            md_file = operation(md_file)
 
     # Now write the images on the filesystem
+    save_images(image_refs, images, config)
+
+    # Now create index pages
+    index_frontmatter = {
+        "layout": "page",
+        "title": "Notes",
+        "permalink": "/notes",
+        "tags": "italian",
+    }
+    index_content = "Here you can find the categories of all the notes on the site: \n"
+    index_content += create_table_contents(files, config)
+    with open(
+        os.path.join(config.output.filesystem, config.output.path, "index.md"), "w"
+    ) as f:
+        f.write(frontmatter.dumps(frontmatter.Post(index_content, **index_frontmatter)))
+
+
+def save_images(image_refs: Iterable[str], images: list[str], config: Config):
+    """Saves the images in the correct directory."""
     for image in image_refs:
         image_local_path = None
         for img in images:
@@ -163,18 +95,12 @@ def main(config: str):
             with open(image_local_path, "rb") as i:
                 f.write(i.read())
 
-    # Now create index pages
-    index_frontmatter = {
-        "layout": "page",
-        "title": "Notes",
-        "permalink": "/notes",
-        "tags": "italian",
-    }
-    index_content = "Here you can find the categories of all the notes on the site: \n"
 
+def create_table_contents(files: list[str], config: Config) -> str:
+    """Creates the table of contents for the index page."""
     categories = {}
     for file in files:
-        _, contents, references = load_contents(file)
+        _, contents, references = _load_contents(file)
         no_extension = utils.remove_extension(os.path.basename(file))
         target = "/" + utils.to_kebab_case(config.output.path + "/" + no_extension)
 
@@ -187,7 +113,7 @@ def main(config: str):
         else:
             categories[current_category] += f"- [{no_extension}]({target})\n"
 
-    index_content += "## Table of Contents\n"
+    index_content = "## Table of Contents\n"
     for category in categories:
         index_content += f"- [{category}](#{utils.to_kebab_case(category)})\n"
     index_content += "\n\n"
@@ -195,10 +121,30 @@ def main(config: str):
     for category, content in categories.items():
         index_content += f"## {category}\n"
         index_content += content + "\n\n"
-    with open(
-        os.path.join(config.output.filesystem, config.output.path, "index.md"), "w"
-    ) as f:
-        f.write(frontmatter.dumps(frontmatter.Post(index_content, **index_frontmatter)))
+
+    return index_content
+
+
+def load_images(filepath: str) -> list[str]:
+    """Returns a list of all files in the directory."""
+    result = []
+    for root, dirs, files in os.walk(filepath):
+        for file in files:
+            if utils.is_image(file):
+                result.append(os.path.join(root, file))
+
+    return result
+
+
+def load_files(filepath: str) -> list[str]:
+    """Returns a list of all files in the directory."""
+    result = []
+    for root, dirs, files in os.walk(filepath):
+        for file in files:
+            if not utils.is_image(file):
+                result.append(os.path.join(root, file))
+
+    return result
 
 
 if __name__ == "__main__":

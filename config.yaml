@@ -5,9 +5,27 @@ sources:
   images:
     - /home/flecart/Documents/old_obsidian/image
 
-
 output:
   base: "{{ site.baseurl }}"
   path: notes
   images: images/notes
   filesystem: /home/flecart/Desktop/hot/flecart.github.io
+
+pipeline:
+  - name: math_convert
+    options: {}
+  - name: link_convert
+    options: {}
+  - name: remove_after_string
+    options:
+      string: "# Registro ripassi"
+  - name: remove_after_string
+    options:
+      string: "## Note di ripasso"
+  - name: update_frontmatter
+    options:
+      frontmatter:
+        layout: page
+        tags: "italian"
+  - name: write_file
+    options: {}
