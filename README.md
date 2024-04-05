@@ -12,7 +12,8 @@ Convert obsidian files into well linked markdowns!
 Define a configuration file `config.yaml`. In the repo it is provided one as example.
 Install the `poetry` dependencies and then you just need to run `poetry run python -m obsidown --config path/to/config.yaml`
 
-Installation as a python package is still on todo!
+It's possible to install from `pypi` index by `pip install obsidown`.
+Then you can run it with `python -m obsidown`
 
 ## Feedback
 
