@@ -192,3 +192,7 @@ def test_convert_external_links():
     page = "[video](https://youtu.be/D5ABGSplM8c?t=548&autoplay=1)"
     expected_output = "[video](https://youtu.be/D5ABGSplM8c?t=548&autoplay=1)"
     assert convert_external_links(page) == expected_output
+
+    page = "[(Shannon 1948)](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf)"
+    expected_output = "[(Shannon 1948)](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf)"
+    assert convert_external_links(page) == expected_output

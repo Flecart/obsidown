@@ -14,8 +14,6 @@ output:
 pipeline:
   - name: math_convert
     options: {}
-  - name: link_convert
-    options: {}
   - name: remove_after_string
     options:
       string: "# Registro ripassi"
@@ -27,5 +25,10 @@ pipeline:
       frontmatter:
         layout: page
         tags: "italian"
+  - name: citation_convert
+    options: 
+      bibfile: /home/flecart/Documents/old_obsidian/zotero.bib
+  - name: link_convert
+    options: {}
   - name: write_file
     options: {}

@@ -53,7 +53,7 @@ def convert_external_links(page: str):
 
     # Questo regex è un po' fragile, ma è difficile da fare, dovresti avere lookahead infinito!
     return re.sub(
-        r"(?<!\[)(https?:\/\/[^\s\]\(\)]+)(?!(\)|[a-z]|\.|[0-9]|[A-Z]|\/|_|-|=|\?|&))",
+        r"(?<!\[)(https?:\/\/[^\s\]\(\)]+)(?!(\)|[a-z]|\.|[0-9]|[A-Z]|\/|_|-|=|\?|&|~))",
         r"[\1](\1)",
         page,
     )

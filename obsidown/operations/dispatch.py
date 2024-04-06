@@ -23,7 +23,7 @@ def dispatch(
             return UpdateFrontMatter(config, *args, **kwargs)
         case "write_file":
             return WriteFile(config, *args, **kwargs)
-        case "citations":
+        case "citation_convert":
             return CitationConvert(*args, **kwargs)
         case _:
             raise ValueError(f"Unknown operation: {name}")
