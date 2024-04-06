@@ -5,6 +5,16 @@ description = "A quick way to convert obsidian markdown docs to markdown static 
 authors = ["Angelo 'Flecart' Huang <xuanqiang.huang@studio.unibo.it>"]
 license = "GPL-3.0-only"
 readme = "README.md"
+homepage = "https://pypi.org/project/obsidown/"
+repository = "https://github.com/flecart/obsidown"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.11",
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
