@@ -21,6 +21,7 @@ python = "^3.11"
 pyyaml = "^6.0.1"
 python-frontmatter = "^1.1.0"
 pydantic = "^2.6.3"
+bibtexparser = {version = "^2.0.0b7", allow-prereleases = true}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
