@@ -78,7 +78,8 @@ class CitationConvert(MdOperations):
         )
 
         # Should add config to see if needs to add a section of references at the end
-        new_contents += "\n\n# References\n\n"
+        if len(citation_key_set) != 0:
+            new_contents += "\n\n# References\n\n"
         for i, key in enumerate(citation_key_set):
             entry = self.bib[key]
             new_contents += f"[{i+1}] {self._format_long_citation(entry)}\n\n"
