@@ -16,7 +16,7 @@ class LinkConvert(MdOperations):
         if len(file.references) > 0:
             contents = utils.filter_link(contents, self.not_cited_refs)
             contents = utils.convert_images(contents, "/" + self.config.output.images)
-            contents = utils.convert_links(contents, "/" + self.config.output.path)
+            contents = utils.convert_links(contents, "/" + self.config.output.base)
         contents = utils.convert_links(contents)
 
         return MdFile(

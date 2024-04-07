@@ -6,14 +6,15 @@ sources:
     - /home/flecart/Documents/old_obsidian/image
 
 output:
-  base: "{{ site.baseurl }}"
-  path: notes
+  base: /notes
+  path: content/notes
   images: images/notes
-  filesystem: /home/flecart/Desktop/hot/flecart.github.io
+  images_path: static/images/notes
+  filesystem: /home/flecart/Desktop/hot/blog
 
 pipeline:
-  - name: math_convert
-    options: {}
+  # - name: math_convert
+  #   options: {}
   - name: remove_after_string
     options:
       string: "# Registro ripassi"
@@ -23,8 +24,8 @@ pipeline:
   - name: update_frontmatter
     options:
       frontmatter:
-        layout: page
-        tags: "italian"
+        ShowToc: true
+        TocOpen: false
   - name: citation_convert
     options: 
       bibfile: /home/flecart/Documents/old_obsidian/zotero.bib

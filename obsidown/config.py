@@ -9,9 +9,10 @@ class SourcesList(BaseModel):
 
 
 class Destination(BaseModel):
-    base: str  # URL base
+    base: str  # URL base o fthe files
     path: str  # where to store the files
     images: str  # where to store the images
+    images_path: str  # where to store the images in the filesystem
     filesystem: str  # the location of the processed files
 
 

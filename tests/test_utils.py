@@ -196,3 +196,15 @@ def test_convert_external_links():
     page = "[(Shannon 1948)](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf)"
     expected_output = "[(Shannon 1948)](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf)"
     assert convert_external_links(page) == expected_output
+
+    page = "[qui](https://mbernste.github.io/posts/vae/#appendix-derivation-of-the-kl-divergence-term-when-the-variational-posterior-and-prior-are-gaussian)"
+    expected_output = "[qui](https://mbernste.github.io/posts/vae/#appendix-derivation-of-the-kl-divergence-term-when-the-variational-posterior-and-prior-are-gaussian)"
+    assert convert_external_links(page) == expected_output
+
+    page = "[Esperimento didattico: portabilità dei compilatori](https://so.v2.cs.unibo.it/wiki/index.php/Esperimento_didattico:_portabilit%C3%A0_dei_compilatori)"
+    expected_output = "[Esperimento didattico: portabilità dei compilatori](https://so.v2.cs.unibo.it/wiki/index.php/Esperimento_didattico:_portabilit%C3%A0_dei_compilatori)"
+    assert convert_external_links(page) == expected_output
+
+    page = "[wiki](https://it.wikipedia.org/wiki/Sistema_di_numerazione_posizionale#:~:text=Un%20sistema%20di%20numerazione%20posizionale,posizione%20che%20occupano%20nella%20notazione.)"
+    expected_output = "[wiki](https://it.wikipedia.org/wiki/Sistema_di_numerazione_posizionale#:~:text=Un%20sistema%20di%20numerazione%20posizionale,posizione%20che%20occupano%20nella%20notazione.)"
+    assert convert_external_links(page) == expected_output

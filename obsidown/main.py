@@ -1,7 +1,6 @@
 from typing import Iterable
 import yaml
 import os
-import frontmatter
 
 from obsidown.config import Config
 from obsidown.operations.base import MdFile, _load_contents
@@ -53,19 +52,31 @@ def main(config: str):
     # Now write the images on the filesystem
     save_images(image_refs, images, config)
 
+    # Don't know if index page is needed
     # Now create index pages
-    index_frontmatter = {
-        "layout": "page",
-        "title": "Notes",
-        "permalink": "/notes",
-        "tags": "italian",
-    }
-    index_content = "Here you can find the categories of all the notes on the site: \n"
-    index_content += create_table_contents(files, config)
-    with open(
-        os.path.join(config.output.filesystem, config.output.path, "index.md"), "w"
-    ) as f:
-        f.write(frontmatter.dumps(frontmatter.Post(index_content, **index_frontmatter)))
+
+
+#     index_frontmatter = {
+#         "title": "Notes",
+#     }
+#     index_content = "Follow the RSS feed of my notes:"
+#     index_content += """
+# <a href="/notes/index.xml" title="RSS" aria-label="RSS">
+#     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+#     stroke-linecap="round" stroke-linejoin="round" height="23">
+#     <path d="M4 11a9 9 0 0 1 9 9" />
+#     <path d="M4 4a16 16 0 0 1 16 16" />
+#     <circle cx="5" cy="19" r="1" />
+#     </svg>
+# </a>
+# \n
+# """
+#     index_content += "Here you can find the categories of all the notes on the site: \n"
+# index_content += create_table_contents(files, config)
+# with open(
+#     os.path.join(config.output.filesystem, config.output.path, "index.md"), "w"
+# ) as f:
+#     f.write(frontmatter.dumps(frontmatter.Post(index_content, **index_frontmatter)))
 
 
 def save_images(image_refs: Iterable[str], images: list[str], config: Config):
@@ -84,13 +95,14 @@ def save_images(image_refs: Iterable[str], images: list[str], config: Config):
         # Another solution is to change the name of the image...
         dirname = os.path.dirname(image)
         output_dir = os.path.join(
-            config.output.filesystem, config.output.images, dirname
+            config.output.filesystem, config.output.images_path, dirname
         )
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
         with open(
-            os.path.join(config.output.filesystem, config.output.images, image), "wb"
+            os.path.join(config.output.filesystem, config.output.images_path, image),
+            "wb",
         ) as f:
             with open(image_local_path, "rb") as i:
                 f.write(i.read())
@@ -113,12 +125,14 @@ def create_table_contents(files: list[str], config: Config) -> str:
         else:
             categories[current_category] += f"- [{no_extension}]({target})\n"
 
-    index_content = "## Table of Contents\n"
-    for category in categories:
-        index_content += f"- [{category}](#{utils.to_kebab_case(category)})\n"
-    index_content += "\n\n"
+    # index_content = "## Table of Contents\n"
+    # for category in categories:
+    #     index_content += f"- [{category}](#{utils.to_kebab_case(category)})\n"
+    # index_content += "\n\n"
 
-    for category, content in categories.items():
+    index_content = ""
+
+    for category, content in sorted(categories.items(), key=lambda x: x[0]):
         index_content += f"## {category}\n"
         index_content += content + "\n\n"
 
