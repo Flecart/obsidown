@@ -1,5 +1,6 @@
 from obsidown import (
     convert_maths,
+    convert_katex,
     convert_images,
     extract_links,
     convert_links,
@@ -39,6 +40,26 @@ def test_convert_maths():
     page = "$$\nx = y\n$$ and $a = b$"
     expected_output = "\n$$\nx = y\n$$\n and $$a = b$$"
     assert convert_maths(page) == expected_output
+
+
+def test_convert_katex():
+    page = "No math here"
+    expected_output = "No math here"
+    assert convert_katex(page) == expected_output
+
+    # page = "$$x = y \\\\ a$$ and $a = b$"
+    # expected_output = "$$x = y \\\\\\ a$$ and $a = b$"
+    # assert convert_katex(page) == expected_output
+
+    # page = "$$x = y_{i}$$"
+    # expected_output = "$$x = y\\_{i}$$"
+    # assert convert_katex(page) == expected_output
+
+    # page = "$$x = y_{i}$$ and $$x = y_{i}$$"
+    # expected_output = "$$x = y\\_{i}$$ and $$x = y\\_{i}$$"
+
+    # page = "$$x = y_{i}$$ and $$x = y_{i}$$ and $$x = y_{i}$$"
+    # expected_output = "$$x = y\\_{i}$$ and $$x = y\\_{i}$$ and $$x = y\\_{i}$$"
 
 
 def test_convert_images():

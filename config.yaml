@@ -6,7 +6,7 @@ sources:
     - /home/flecart/Documents/old_obsidian/image
 
 output:
-  base: /notes
+  base: notes
   path: content/notes
   images: images/notes
   images_path: static/images/notes
@@ -14,7 +14,8 @@ output:
 
 pipeline:
   # - name: math_convert
-  #   options: {}
+  #   options:
+  #     engine: mathjax
   - name: remove_after_string
     options:
       string: "# Registro ripassi"

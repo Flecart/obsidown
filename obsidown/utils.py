@@ -15,6 +15,30 @@ def convert_maths(page: str):
     return page
 
 
+def convert_katex(page: str):
+    """Converts elements found problematic into well formed katex elements
+
+    Example
+    -------
+    >>> convert_katex("$$x = y \\\\$$ and $a = b$")
+    "$$x = y \\\\\\$$ and $$a = b$$"
+    >>> convert_katex("$$x = y_{i}$$")
+    "$$x = y\\_{i}$$"
+    """
+    # Replace \\ with \\\\
+    dollar_matches = r"\$\$([^\$]+?)\\\\([^\$\\]+?)\$\$"
+    while re.search(dollar_matches, page):
+        page = re.sub(dollar_matches, r"$$\1\\\\\\\2$$", page)
+        print(page)
+
+    # Replace _{ with \_{ and } with }
+    substring = r"\$\$([^\$\\]+?)_{([^\$]+?)}\$\$"
+    while re.search(substring, page):
+        page = re.sub(substring, r"$$\1\\_{\2}$$", page)
+
+    return page
+
+
 def convert_images(page: str, base: str = ""):
     """Convert image obsidian markdown tags into html tags.
     Args
