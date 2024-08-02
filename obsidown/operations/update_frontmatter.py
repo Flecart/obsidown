@@ -23,9 +23,16 @@ class UpdateFrontMatter(MdOperations):
     def __call__(self, file: MdFile) -> MdFile:
         """Updates the frontmatter of the markdown files."""
 
-        no_extension = utils.remove_extension(os.path.basename(file.filename))
         metadata = copy.deepcopy(self.new_metadata)
-        metadata["title"] = no_extension
+
+        if "title" in file.metadata:
+            metadata["title"] = file.metadata["title"]
+        else:
+            no_extension = utils.remove_extension(os.path.basename(file.filename))
+            metadata["title"] = no_extension
+
+        if "url" in file.metadata:
+            metadata["url"] = file.metadata["url"]
         # metadata["permalink"] = utils.to_kebab_case(
         #     self.config.output.path + "/" + no_extension
         # )
@@ -48,7 +55,10 @@ class UpdateFrontMatter(MdOperations):
 
         if "weight" in file.metadata:
             metadata["weight"] = file.metadata["weight"]
-        metadata["weight"] = random.randint(1, 50)  # play lottery lol
+        else:
+            metadata["weight"] = random.randint(1, 50)  # play lottery lol
+
+        print(metadata)
 
         return MdFile(
             metadata=metadata,
