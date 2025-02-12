@@ -1,4 +1,45 @@
 import re
+from datetime import datetime, timedelta, timezone
+
+def interpolate_weight(dt: datetime) -> float:
+    """Interpolates a weight for a given datetime between 2022 and 2030, considering full time granularity."""
+    # Define start and end times
+    start_dt = datetime(2017, 1, 1, 0, 0, 0)
+    end_dt = datetime(2030, 12, 31, 23, 59, 59)
+
+    # Define corresponding weights
+    start_weight, end_weight = 1, 3_000_000
+
+    # Ensure dt is within the valid range
+    if dt < start_dt:
+        return float(start_weight)
+    if dt > end_dt:
+        return float(end_weight)
+
+    # Compute interpolation factor based on total seconds elapsed
+    total_seconds = (end_dt - start_dt).total_seconds()
+    elapsed_seconds = (dt - start_dt).total_seconds()
+    factor = elapsed_seconds / total_seconds
+
+    # Linear interpolation
+    weight = start_weight + factor * (end_weight - start_weight)
+    
+    return int(weight)
+
+
+def parse_datetime(date_str: str):
+    """
+    Parse the time from the git log.
+    date_str = "Mon Apr 8 01:33:22 2024 +0200"
+    """
+    dt = datetime.strptime(date_str[:-6], "%a %b %d %H:%M:%S %Y")
+    offset_sign = 1 if date_str[-5] == '+' else -1
+    offset_hours = int(date_str[-4:-2])
+    offset_minutes = int(date_str[-2:])
+    offset_delta = timedelta(hours=offset_hours, minutes=offset_minutes)
+    dt = dt.replace(tzinfo=timezone(offset_sign * offset_delta))
+
+    return dt
 
 
 def convert_maths(page: str):

@@ -11,16 +11,21 @@ from . import utils
 def main(config: str):
     """List of paths"""
 
+    print("reading the config")
     config = yaml.load(open(config, "r"), Loader=yaml.FullLoader)
     config: Config = Config(**config)
 
+    print("Loading images")
     images = []
     for images_path in config.sources.images:
         images += load_images(images_path)
 
+    print("Loading files")
     files = []
     for path in config.sources.paths:
         files += load_files(path)
+    print(f"reading {len(files)} files")
+
     image_refs = set()
     for file in files:
         md_file = MdFile.from_filename(file)
@@ -48,6 +53,7 @@ def main(config: str):
                 operation.name, config, not_cited_refs, **operation.options
             )
             md_file = operation(md_file)
+    
 
     # Now write the images on the filesystem
     save_images(image_refs, images, config)

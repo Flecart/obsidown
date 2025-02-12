@@ -1,16 +1,17 @@
 sources:
   paths:
-    - /home/flecart/Documents/old_obsidian/study-notes/universita
-    - /home/flecart/Documents/old_obsidian/study-notes/other
+    - /home/flecart/Desktop/old_obsidian/study-notes/universita
+    - /home/flecart/Desktop/old_obsidian/study-notes/master
+    - /home/flecart/Desktop/old_obsidian/study-notes/other
   images:
-    - /home/flecart/Documents/old_obsidian/image
+    - /home/flecart/Desktop/old_obsidian/image
 
 output:
   base: notes
   path: content/notes
   images: images/notes
   images_path: static/images/notes
-  filesystem: /home/flecart/Desktop/hot/blog
+  filesystem: /home/flecart/Desktop/website
 
 pipeline:
   # - name: math_convert
