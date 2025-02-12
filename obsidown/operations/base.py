@@ -1,5 +1,6 @@
 import frontmatter
-import subprocess
+import os
+from git import Repo
 from pydantic import BaseModel
 
 from obsidown import utils
@@ -50,13 +51,8 @@ def _load_contents(filepath: str) -> tuple[dict, str, list[str]]:
     with open(filepath, "r") as file:
         metadata, contents = frontmatter.parse(file.read())
 
-    result = subprocess.run(
-        ["git", "log", "-1", "--format=%cd", "--", filepath],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-    last_commit_time = result.stdout.strip()
-    metadata["last_commit_time"] = utils.parse_datetime(last_commit_time)
+    repo = Repo(os.path.dirname(filepath), search_parent_directories=True)
+    commit = next(repo.iter_commits(paths=filepath, max_count=1))
+    metadata["last_commit_time"] = commit.committed_datetime
 
     return metadata, contents, utils.extract_links(contents)

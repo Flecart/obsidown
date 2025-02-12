@@ -58,7 +58,7 @@ class UpdateFrontMatter(MdOperations):
         else:
             # else we use the last commit time
             if "last_commit_time" in file.metadata:
-                metadata["weight"] = utils.interpolate_weight(metadata["last_commit_time"])
+                metadata["weight"] = utils.interpolate_weight(file.metadata["last_commit_time"])
             else:
                 metadata["weight"] = random.randint(1, 50)  # play lottery lol
 

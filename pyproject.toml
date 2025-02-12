@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "obsidown"
-version = "0.2.0"
+version = "0.2.2"
 description = "A quick way to convert obsidian markdown docs to markdown static pages"
 authors = ["Angelo 'Flecart' Huang <xuanqiang.huang@studio.unibo.it>"]
 license = "GPL-3.0-only"
@@ -22,6 +22,7 @@ pyyaml = "^6.0.1"
 python-frontmatter = "^1.1.0"
 pydantic = "^2.6.3"
 bibtexparser = {version = "^2.0.0b7", allow-prereleases = true}
+gitpython = "^3.1.44"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"

@@ -4,6 +4,10 @@ from datetime import datetime, timedelta, timezone
 def interpolate_weight(dt: datetime) -> float:
     """Interpolates a weight for a given datetime between 2022 and 2030, considering full time granularity."""
     # Define start and end times
+
+    if dt.tzinfo is not None:
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+
     start_dt = datetime(2017, 1, 1, 0, 0, 0)
     end_dt = datetime(2030, 12, 31, 23, 59, 59)
 
@@ -24,6 +28,8 @@ def interpolate_weight(dt: datetime) -> float:
     # Linear interpolation
     weight = start_weight + factor * (end_weight - start_weight)
     
+    # Now we have to invert the process so that the smaller weight is for the most recent commit
+    weight = end_weight - weight + start_weight
     return int(weight)
 
 
