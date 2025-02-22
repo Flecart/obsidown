@@ -180,8 +180,13 @@ class CitationConvert(MdOperations):
     def __format_inproceedings(self, entry: model.Entry):
         if "publisher" in entry:
             string = f"{entry['publisher']} "
-        else:
+        elif "booktitle" in entry:
             string = f"{entry['booktitle']} "
+        elif "eventtitle" in entry:
+            string = f"{entry['eventtitle']} "
+        else:
+            print("WARNING: No publisher or booktitle in the bib entry")
+            return " "
 
         return f"{string}"
 
