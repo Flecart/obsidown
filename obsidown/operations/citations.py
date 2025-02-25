@@ -192,14 +192,16 @@ class CitationConvert(MdOperations):
 
     def __format_online(self, entry: model.Entry):
         if "eprinttype" not in entry:
-            print("WARNING: No eprinttype in the bib entry")
+            print(f"WARNING: {entry.key} has no eprinttype in the bib entry")
             return ""
 
         match entry["eprinttype"]:
             case "arxiv":
                 return f"arXiv preprint arXiv:{entry['eprint']}"
+            case "arXiv":
+                return f"arXiv preprint arXiv:{entry['eprint']}"
             case "doi":
                 return self._format_doi(entry)
             case _:
-                print(f"WARNING: {entry.key} Unknown eprinttype for -{entry["eprinttype"]}-")
+                print(f"WARNING: {entry.key} Unknown eprinttype for -{entry['eprinttype']}-")
                 return ""

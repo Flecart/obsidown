@@ -33,7 +33,8 @@ def main(config: str):
         # We need to remove the references that will not be present in the final file
         not_cited_refs = set()
         for ref in md_file.references:
-            ref = ref.split("|")[0]  # don't want the aliases!
+            ref_split = ref.split("|")
+            ref = ref_split[0]  # don't want the aliases!
             if utils.is_image(ref):
                 image_refs.add(ref)
             else:

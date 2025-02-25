@@ -1,5 +1,6 @@
 import re
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urljoin
 
 def interpolate_weight(dt: datetime) -> float:
     """Interpolates a weight for a given datetime between 2022 and 2030, considering full time granularity."""
@@ -98,13 +99,23 @@ def convert_images(page: str, base: str = ""):
     # First convert image tags with numbers to html image tags
     page = re.sub(
         r"!\[\[([^\]]+?)(\.jpeg|\.webp|\.png|.jpg)\|([0-9|\s]+)\]\]",
-        r'<img src="' + base + "/" + r'\1\2" width="\3" alt="\1">',
+        r'<img src="' + base + "/" + r'\1\2" width="\3" class="center" alt="\1"/>',
         page,
     )
+
+    # Convert image tags with comments to figure tags
+    page = re.sub(
+        r"!\[\[([^\]]+?)(\.jpeg|\.webp|\.png|.jpg)\|(.+)\]\]",
+        r'''<figure class="center">
+<img src="''' + base + "/" + r'''\1\2" style="width: 100%"   alt="\1" title="\1"/>
+<figcaption><p style="text-align:center;">\3</p></figcaption>
+</figure>'''
+    , page)
+
     # Convert markdown image tags to html image tags
     page = re.sub(
         r"!\[\[([^\]]+?)(\.jpeg|\.webp|\.png|.jpg)\]\]",
-        r'<img src="' + base + "/" + r'\1\2" alt="\1">',
+        r'<img src="' + base + "/" + r'\1\2" style="width: 100%" class="center" alt="\1">',
         page,
     )
 
@@ -137,7 +148,7 @@ def convert_links(page: str, base: str = ""):  #
     Example
     -------
     >>> convert_links("hello [[world]]", "https://google.com")
-    "hello [world](https://google.com/world)"
+    "hello <a href="https://google.com/world">{world}</a>"
     """
     # first convert hashtag links
 
@@ -167,7 +178,15 @@ def convert_links(page: str, base: str = ""):  #
         page,
     )
     page = re.sub(r"\[\[([^\]]+?)\]\]", lambda x: convert_to_md2(x.group(1)), page)
-    return page
+
+    # convert standard links
+    def replace_link(match):
+        text, url = match.groups()
+        full_url = urljoin(base, url)  # Resolve relative URLs if base is provided
+        return f'<a href="{full_url}">{text}</a>'
+    
+    pattern = re.compile(r'\[([^\[\]]*?)\]\((.*?)\)')
+    return pattern.sub(replace_link, page)
 
 
 def filter_link(page: str, links: list[str]):
