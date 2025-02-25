@@ -201,5 +201,5 @@ class CitationConvert(MdOperations):
             case "doi":
                 return self._format_doi(entry)
             case _:
-                print("WARNING: Unknown eprinttype")
+                print(f"WARNING: {entry.key} Unknown eprinttype for -{entry["eprinttype"]}-")
                 return ""
