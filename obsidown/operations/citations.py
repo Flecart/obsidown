@@ -31,6 +31,7 @@ class CitationConvert(MdOperations):
             return
 
         with open(bibfile, "r") as f:
+            print(f"Loading bib file {bibfile}")
             string = f.read()
 
         layers = [
@@ -41,6 +42,11 @@ class CitationConvert(MdOperations):
 
         db = bibtexparser.parse_string(string, append_middleware=layers)
 
+        print(f"Parsed {len(db.blocks)} blocks, including:"
+        f"\n\t{len(db.entries)} entries"
+            f"\n\t{len(db.comments)} comments"
+            f"\n\t{len(db.strings)} strings and"
+            f"\n\t{len(db.preambles)} preambles")
         entries_dict = {}
         for entry in db.entries:
             entries_dict[entry.key] = entry
@@ -104,7 +110,13 @@ class CitationConvert(MdOperations):
     def __format_date(self, entry: model.Entry):
         """Formats the date of the citation"""
         if "date" not in entry:
-            print(f"WARNING: No date in the bib entry {entry.key}")
+            if "year" in entry:
+                result = entry["year"]
+                if "month" in entry:
+                    month = entry["month"]
+                    result = f"{month.capitalize()}. {result}"
+                return entry["year"]
+            print(f"WARNING: No date nor year in the bib entry {entry.key}")
             return ""
         # assume is in the format of %Y-%m-%d, or %Y-%m or %Y
         date_str = entry["date"]
@@ -115,7 +127,7 @@ class CitationConvert(MdOperations):
     def _format_citation_name(self, entry: model.Entry):
         """Formats the citation name"""
         if "author" not in entry:
-            raise ValueError("No author in the bib entry")
+            raise ValueError(f"No author in the bib entry {entry}")
 
         def join_name_parts(name_parts: list[str]) -> str:
             return " ".join(name_parts)
@@ -145,25 +157,32 @@ class CitationConvert(MdOperations):
 
     def __format_journal_type(self, entry: model.Entry):
         """Formats the journal citation type"""
-
+        result = ""
         match entry.entry_type:
             case "article":
-                return self.__format_article(entry)
+                result = self.__format_article(entry)
             case "book":
-                return self.__format_book(entry)
+                result = self.__format_book(entry)
             case "inproceedings":
-                return self.__format_inproceedings(entry)
+                result = self.__format_inproceedings(entry)
             case "online":
-                return self.__format_online(entry)
+                result = self.__format_online(entry)
+            case "misc":
+                result = self.__format_misc(entry)
             case _:
-                print("WARNING: Unknown type journal")
-                return ""
+                print(f"WARNING: Unknown type journal for {entry.key} - {entry.entry_type}")
+            
+        if result:
+            # remove { and } from the result
+            result = result.replace("{", "").replace("}", "")
+
+        return result
 
     def __format_article(self, entry: model.Entry):
         """Formats the article citation type"""
         final_string = ""
-        if "journaltitle" in entry:
-            final_string = f"{entry['journaltitle']}"
+        if "journal" in entry:
+            final_string = f"{entry['journal']}"
         if "volume" in entry:
             final_string += f" Vol. {entry['volume']}"
         if "number" in entry:
@@ -205,3 +224,9 @@ class CitationConvert(MdOperations):
             case _:
                 print(f"WARNING: {entry.key} Unknown eprinttype for -{entry['eprinttype']}-")
                 return ""
+
+    def __format_misc(self, entry: model.Entry):
+        if "publisher" in entry and "arxiv" in entry["publisher"].lower():
+            return f"arXiv preprint arXiv:{entry['eprint']}"
+        
+        print(f"WARNING: No known misc in the bib entry {entry.key}")
