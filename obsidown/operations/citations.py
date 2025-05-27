@@ -5,6 +5,7 @@ import bibtexparser
 import bibtexparser.middlewares as m
 import bibtexparser.model as model
 import re
+from obsidown import utils
 
 bibdict: dict[str, model.Entry] | None = None
 
@@ -74,8 +75,7 @@ class CitationConvert(MdOperations):
                 return f'[{citation_string}]({entry["url"]})'
             else:
                 print(f"WARNING: No url in the bib entry {entry.key}")
-
-            return citation_string
+                return f'[{citation_string}](/notes/{utils.to_kebab_case(file.get_title())}#{key})'  # this has a lot of dependencies, should be refactored
 
         new_contents = re.sub(
             r"\[\[@([^\]]+?)(\|([^\]]+))?\]\]",
@@ -88,7 +88,7 @@ class CitationConvert(MdOperations):
             new_contents += "\n\n# References\n\n"
         for i, key in enumerate(citation_key_set):
             entry = self.bib[key]
-            new_contents += f"[{i+1}] {self._format_long_citation(entry)}\n\n"
+            new_contents += f"<p id={key}>[{i+1}] {self._format_long_citation(entry)}\n\n </p>\n"
 
         return MdFile(
             metadata=file.metadata,

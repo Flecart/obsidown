@@ -23,6 +23,14 @@ class MdFile(BaseModel):
         )
         return new_instance
 
+    def get_title(self) -> str:
+        """Get the title of the markdown file."""
+        return self.metadata["title"]
+
+    def get_url(self):
+        """Get the URL of the markdown file."""
+        return self.metadata.get("url", None)
+
 
 class MdOperations:
     """Operations that run on a single markdown file"""
