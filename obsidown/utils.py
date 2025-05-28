@@ -232,6 +232,14 @@ def remove_extension(name: str):
     return ".".join(name.split(".")[:-1])
 
 
-def remove_after_string(content: str, string: str):
+def remove_after_string(content: str, string: str, line: bool = False) -> str:
     """Remove everything after a string."""
-    return content.split(string)[0]
+    if not line:
+        return content.split(string)[0]
+    else:
+        # Remove everything after the first occurrence of the string in the line
+        lines = content.splitlines()
+        for i, line in enumerate(lines):
+            if string in line:
+                lines[i] = line.split(string)[0]
+        return "\n".join(lines)

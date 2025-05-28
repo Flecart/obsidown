@@ -23,6 +23,18 @@ pipeline:
   - name: remove_after_string
     options:
       string: "## Note di ripasso"
+  - name: remove_after_string
+    options:
+      string: "🟩"
+      line: true
+  - name: remove_after_string
+    options:
+      string: "🟨"
+      line: true
+  - name: remove_after_string
+    options:
+      string: "🟥"
+      line: true
   - name: update_frontmatter
     options:
       frontmatter:
