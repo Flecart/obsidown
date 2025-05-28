@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "obsidown"
-version = "0.2.5"
+version = "0.2.6"
 description = "A quick way to convert obsidian markdown docs to markdown static pages"
 authors = ["Angelo 'Flecart' Huang <xuanqiang.huang@studio.unibo.it>"]
 license = "GPL-3.0-only"
