@@ -207,7 +207,7 @@ def filter_link(page: str, links: list[str]):
 
 def extract_links(page: str):
     """Extract all the links from the page."""
-    return re.findall(r"\[\[([^\]]+?)\]\]", page)
+    return re.findall(r"\[\[(.+?)\]\]", page)
 
 
 def is_image(name: str):

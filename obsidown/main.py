@@ -88,6 +88,7 @@ def main(config: str):
 
 def save_images(image_refs: Iterable[str], images: list[str], config: Config):
     """Saves the images in the correct directory."""
+    print("Saving images...", len(image_refs), "images found.")
     for image in image_refs:
         image_local_path = None
         for img in images:

@@ -41,6 +41,9 @@ class UpdateFrontMatter(MdOperations):
         #     self.config.output.path + "/" + no_extension
         # )
 
+        if "date" in file.metadata:
+            metadata["date"] = file.metadata["date"]
+
         if "language" in file.metadata:
             metadata["language"] = file.metadata["language"]
 

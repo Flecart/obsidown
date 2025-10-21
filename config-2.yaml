@@ -1,0 +1,22 @@
+sources:
+  paths:
+    - /home/flecart/Desktop/old_obsidian/posts
+  images:
+    - /home/flecart/Desktop/old_obsidian/image
+
+output:
+  base: posts
+  path: content/posts
+  images: images/posts
+  images_path: static/images/
+  filesystem: /home/flecart/Desktop/website
+
+pipeline:
+  - name: citation_convert
+    options: 
+      bibfile: /home/flecart/Desktop/old_obsidian/zotero.bib
+      include_parentesis: false
+  - name: link_convert
+    options: {}
+  - name: write_file
+    options: {}

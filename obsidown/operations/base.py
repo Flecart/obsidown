@@ -2,6 +2,7 @@ import frontmatter
 import os
 from git import Repo
 from pydantic import BaseModel
+import datetime
 
 from obsidown import utils
 
@@ -59,8 +60,11 @@ def _load_contents(filepath: str) -> tuple[dict, str, list[str]]:
     with open(filepath, "r") as file:
         metadata, contents = frontmatter.parse(file.read())
 
-    repo = Repo(os.path.dirname(filepath), search_parent_directories=True)
-    commit = next(repo.iter_commits(paths=filepath, max_count=1))
-    metadata["last_commit_time"] = commit.committed_datetime
+    try:
+        repo = Repo(os.path.dirname(filepath), search_parent_directories=True)
+        commit = next(repo.iter_commits(paths=filepath, max_count=1))
+        metadata["last_commit_time"] = commit.committed_datetime
+    except Exception as e:
+        metadata["last_commit_time"] = datetime.datetime.now()
 
     return metadata, contents, utils.extract_links(contents)

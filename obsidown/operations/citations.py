@@ -21,10 +21,11 @@ class RemoveTitleCurly(m.BlockMiddleware):
 
 
 class CitationConvert(MdOperations):
-    def __init__(self, bibfile: str):
+    def __init__(self, bibfile: str, include_parentesis: bool = True):
         """Load the bib file and store it in the object.
         bibfile can be a string or a path to the bibfile!?
         """
+        self.include_parentesis = include_parentesis
         # use cache
         global bibdict
         if bibdict is not None:
@@ -70,7 +71,9 @@ class CitationConvert(MdOperations):
 
             entry = self.bib[key]
 
-            citation_string = f"({self._format_citation(entry)})"
+            citation_string = f"{self._format_citation(entry)}"
+            if self.include_parentesis:
+                citation_string = f"({citation_string})"
             if "url" in entry:
                 return f'[{citation_string}]({entry["url"]})'
             else:
