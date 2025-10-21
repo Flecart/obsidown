@@ -42,7 +42,7 @@ pipeline:
         TocOpen: false
   - name: citation_convert
     options: 
-      bibfile: /home/flecart/Documents/old_obsidian/zotero.bib
+      bibfile: /home/flecart/Desktop/old_obsidian/zotero.bib
   - name: link_convert
     options: {}
   - name: write_file
