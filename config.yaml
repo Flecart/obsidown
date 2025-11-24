@@ -35,6 +35,9 @@ pipeline:
     options:
       string: "🟥"
       line: true
+  - name: remove_single_char_lines
+    options:
+      character: "-"
   - name: update_frontmatter
     options:
       frontmatter:

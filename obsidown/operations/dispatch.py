@@ -4,6 +4,7 @@ from obsidown.operations.citations import CitationConvert
 from obsidown.operations.link_convert import LinkConvert
 from obsidown.operations.math_convert import MathConvert
 from obsidown.operations.remove_after_string import RemoveAfterString
+from obsidown.operations.remove_single_char_lines import RemoveSingleCharLines
 from obsidown.operations.update_frontmatter import UpdateFrontMatter
 from obsidown.operations.write_file import WriteFile
 
@@ -17,6 +18,8 @@ def dispatch(
             return LinkConvert(config, not_cited_refs, *args, **kwargs)
         case "remove_after_string":
             return RemoveAfterString(*args, **kwargs)
+        case "remove_single_char_lines":
+            return RemoveSingleCharLines(*args, **kwargs)
         case "math_convert":
             return MathConvert(*args, **kwargs)
         case "update_frontmatter":

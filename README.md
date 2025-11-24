@@ -36,3 +36,48 @@ Here I will just outline it briefly.
 - `pipeline`: defines the single operations possible on a markdown file.
   - `name`: the identifier of the operation, you should check `dispatch.py` for a list of the operations.
   - `options`: variable options of the single operation.
+
+### Configuration Reference
+
+Below is a more complete configuration example that you can adapt to your vault:
+
+```yaml
+sources:
+  paths:
+    - /path/to/obsidian/notes
+  images:
+    - /path/to/obsidian/assets
+output:
+  base: notes
+  path: content/notes
+  images: images/notes
+  images_path: static/images/notes
+  filesystem: /var/www/my-site
+pipeline:
+  - name: remove_after_string
+    options:
+      string: "# Private Section"
+  - name: remove_single_char_lines
+    options:
+      character: "-"
+  - name: update_frontmatter
+    options:
+      frontmatter:
+        ShowToc: true
+        TocOpen: false
+  - name: link_convert
+    options: {}
+  - name: write_file
+    options: {}
+```
+
+Some useful pipeline operations and their options:
+
+- `remove_after_string`: drop content after the first occurrence of `string`. Set `line: true` to remove just the matching line portion.
+- `remove_single_char_lines`: remove lines entirely made of repetitions of a single `character` (for example Obsidian separators like `-----`).
+- `update_frontmatter`: merge or override metadata by passing a `frontmatter` dictionary.
+- `citation_convert`: convert citations with `bibfile` pointing to a Zotero/BibTeX export.
+- `link_convert`: translate Obsidian `[[wikilinks]]` into absolute links according to `output.base`.
+- `write_file`: persisting step that writes the transformed file in the configured destination.
+
+You can chain as many operations as you need; each one receives the output of the previous step, so ordering matters.

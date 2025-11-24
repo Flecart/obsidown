@@ -239,7 +239,25 @@ def remove_after_string(content: str, string: str, line: bool = False) -> str:
     else:
         # Remove everything after the first occurrence of the string in the line
         lines = content.splitlines()
-        for i, line in enumerate(lines):
+        new_lines = []
+        for line in lines:
             if string in line:
-                lines[i] = line.split(string)[0]
-        return "\n".join(lines)
+                new_line = line.split(string)[0]
+                if len(new_line) > 0:
+                    new_lines.append(new_line)
+        return "\n".join(new_lines)
+
+
+def remove_single_char_lines(content: str, character: str) -> str:
+    """Remove lines made entirely of the same character (ignoring surrounding whitespace)."""
+    if len(character) != 1:
+        raise ValueError("character must be a single character.")
+
+    cleaned_lines = []
+    for line in content.splitlines():
+        stripped = line.strip()
+        if stripped and all(ch == character for ch in stripped):
+            continue
+        cleaned_lines.append(line)
+
+    return "\n".join(cleaned_lines)

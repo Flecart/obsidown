@@ -7,6 +7,7 @@ from obsidown import (
     filter_link,
     remove_extension,
     convert_external_links,
+    remove_single_char_lines,
 )
 
 
@@ -190,6 +191,15 @@ def test_convert_external_links():
     page = "https://google.com"
     expected_output = "[https://google.com](https://google.com)"
     assert convert_external_links(page) == expected_output
+
+
+def test_remove_single_char_lines():
+    page = "---\nkeep\n***\n   ---   \nend"
+    expected_output = "keep\n***\nend"
+    assert remove_single_char_lines(page, "-") == expected_output
+
+    # Non-matching character should preserve the line
+    assert remove_single_char_lines(page, "#") == page
 
     # Test case: External link already in markdown format
     page = "[https://google.com](https://google.com)"
