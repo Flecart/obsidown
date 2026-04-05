@@ -1,17 +1,17 @@
 sources:
   paths:
-    - /home/flecart/Desktop/old_obsidian/study-notes/master/
+    - /home/angeloh/Desktop/old_obsidian/study-notes/master/
     # - /home/flecart/Desktop/old_obsidian/study-notes/other
     # - /home/flecart/Desktop/old_obsidian/study-notes/universita
   images:
-    - /home/flecart/Desktop/old_obsidian/image
+    - /home/angeloh/Desktop/old_obsidian/image
 
 output:
   base: notes
   path: content/notes
   images: images/notes
   images_path: static/images/notes
-  filesystem: /home/flecart/Desktop/website
+  filesystem: /home/angeloh/Desktop/website
 
 pipeline:
   # - name: math_convert
@@ -45,7 +45,7 @@ pipeline:
         TocOpen: false
   - name: citation_convert
     options: 
-      bibfile: /home/flecart/Desktop/old_obsidian/zotero.bib
+      bibfile: /home/angeloh/Desktop/old_obsidian/zotero.bib
   - name: link_convert
     options: {}
   - name: write_file

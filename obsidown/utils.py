@@ -245,6 +245,8 @@ def remove_after_string(content: str, string: str, line: bool = False) -> str:
                 new_line = line.split(string)[0]
                 if len(new_line) > 0:
                     new_lines.append(new_line)
+            else:
+                new_lines.append(line)
         return "\n".join(new_lines)
 
 

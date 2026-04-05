@@ -1,12 +1,11 @@
-[tool.poetry]
+[project]
 name = "obsidown"
-version = "0.2.9"
+version = "0.2.10"
 description = "A quick way to convert obsidian markdown docs to markdown static pages"
-authors = ["Angelo 'Flecart' Huang <xuanqiang.huang@studio.unibo.it>"]
-license = "GPL-3.0-only"
+authors = [{ name = "Xuanqiang Angelo 'Flecart' Huang", email = "xuanqiang.huang@studio.unibo.it" }]
+license = { text = "GPL-3.0-only" }
 readme = "README.md"
-homepage = "https://pypi.org/project/obsidown/"
-repository = "https://github.com/flecart/obsidown"
+requires-python = ">=3.11"
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Environment :: Console",
@@ -15,23 +14,28 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.11",
 ]
+dependencies = [
+    "pyyaml>=6.0.1",
+    "python-frontmatter>=1.1.0",
+    "pydantic>=2.6.3",
+    "bibtexparser>=2.0.0b7",
+    "gitpython>=3.1.44",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-pyyaml = "^6.0.1"
-python-frontmatter = "^1.1.0"
-pydantic = "^2.6.3"
-bibtexparser = {version = "^2.0.0b7", allow-prereleases = true}
-gitpython = "^3.1.44"
+[project.urls]
+Homepage = "https://pypi.org/project/obsidown/"
+Repository = "https://github.com/flecart/obsidown"
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.1.1"
-ruff = "^0.3.5"
-pre-commit = "^3.7.0"
+[dependency-groups]
+dev = [
+    "pytest>=8.1.1",
+    "ruff>=0.3.5",
+    "pre-commit>=3.7.0",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.

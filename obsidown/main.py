@@ -12,15 +12,16 @@ def main(config: str):
     """List of paths"""
 
     print("reading the config")
-    config = yaml.load(open(config, "r"), Loader=yaml.FullLoader)
-    config: Config = Config(**config)
+    with open(config, "r") as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+        config: Config = Config(**config)
 
     print("Loading images")
     images = []
     for images_path in config.sources.images:
         images += load_images(images_path)
 
-    print("Loading files")
+    print("Loading files from the sources: ", config.sources.paths)
     files = []
     for path in config.sources.paths:
         files += load_files(path)
